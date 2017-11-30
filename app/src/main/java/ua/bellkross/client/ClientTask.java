@@ -14,7 +14,7 @@ import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 
 public class ClientTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String IP = "192.168.0.102";
+    public static final String IP = "192.168.0.103";
     public static final int PORT = 5000;
 
     private Socket socket;
@@ -45,14 +45,14 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    public void push(final String message) {
+    public synchronized void push(final String message) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 out.printf(message);
             }
         }).start();
-        Log.d(LOG_TAG, "message pushed");
+        Log.d(LOG_TAG, "message " + message + " pushed");
     }
 
     @Override
@@ -88,6 +88,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             try {
                 while (!stoped) {
                     final String str = in.readLine();
+
                     Log.d(LOG_TAG, str);
                 }
             } catch (IOException e) {
@@ -95,6 +96,10 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void command(int command){
+
     }
 
     public String getLogin() {

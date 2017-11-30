@@ -1,26 +1,20 @@
 package ua.bellkross.client;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.TransformationMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.GridView;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
+import android.widget.Toast;
 
 import ua.bellkross.client.database.DBHelper;
 
@@ -29,7 +23,6 @@ public class RoomsActivity extends AppCompatActivity {
     public static String LOG_TAG = "debug";
 
     private Toolbar toolbar;
-    private static String name = "Unnamed";
     private GridView gridView;
     private ClientTask clientTask;
 
@@ -50,8 +43,30 @@ public class RoomsActivity extends AppCompatActivity {
         clientTask.execute();
     }
 
-    public void addRoom(View view){
-        clientTask.push("message");
+    public void addRoom(View view) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ConstraintLayout constraintLayout = (ConstraintLayout)
+                getLayoutInflater().inflate(R.layout.add_room_dialog, null);
+        final EditText etName = constraintLayout.findViewById(R.id.etName);
+        final EditText etPassword = constraintLayout.findViewById(R.id.etPassword);
+        dialog.setView(constraintLayout);
+        dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String name = etName.getText().toString()
+                        .replaceAll(",","").replaceAll(" ", ""),
+                        password = etPassword.getText().toString()
+                                .replaceAll(",","").replaceAll(" ", "");
+                if(!name.isEmpty() && !password.isEmpty()) {
+                    clientTask.push("1" + ',' + name + ',' + password + '.');
+                }else {
+                    String toastText = "Room wasn't created input pass & name !";
+                    Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        dialog.show();
+        //GVA refresh
     }
 
     @Override
@@ -66,11 +81,20 @@ public class RoomsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = etName.getText().toString();
-                        RoomsActivity.name = name;
                         toolbar.setTitle(name);
+                        clientTask.setLogin(name);
+                        clientTask.push(name);
+                    }
+                });
+                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        String name = "Unnamed";
+                        clientTask.push(name);
                         clientTask.setLogin(name);
                     }
                 });
+                clientTask.push("8");
                 dialog.show();
                 break;
         }
