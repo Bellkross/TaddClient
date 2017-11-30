@@ -14,7 +14,7 @@ import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 
 public class ClientTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String IP = "192.168.0.103";
+    public static final String IP = "192.168.0.102";
     public static final int PORT = 5000;
 
     private Socket socket;
@@ -34,10 +34,11 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             InetAddress ipAddress = InetAddress.getByName(IP);
 
             this.socket = new Socket(ipAddress, PORT);
-            out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             resend = new Resender();
             resend.start();
+            Log.d(LOG_TAG, "resender started");
+            out = new PrintWriter(socket.getOutputStream(), true);
             push(login);
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,7 +53,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                 out.printf(message);
             }
         }).start();
-        Log.d(LOG_TAG, "message " + message + " pushed");
+        Log.d(LOG_TAG, "message \"" + message + "\" pushed");
     }
 
     @Override
@@ -88,8 +89,15 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             try {
                 while (!stoped) {
                     final String str = in.readLine();
-
                     Log.d(LOG_TAG, str);
+                    int command = Integer.parseInt(str.substring(0,1));
+                    int comma1 = str.indexOf(',',0);
+                    int comma2 = str.indexOf(',',comma1+1);
+                    int comma3 = str.indexOf(',',comma2+1);
+                    int dot = str.indexOf('.',comma3+1);
+                    Log.d(LOG_TAG, "command = " + command + ", c1 = " + comma1 +
+                            " c2 = " + comma2 + " c3 = " + comma3 + " dot = " + dot);
+                    readCommand(str, command,comma1,comma2,comma3,dot);
                 }
             } catch (IOException e) {
                 Log.d(LOG_TAG, "Ошибка при получении сообщения.");
@@ -98,9 +106,18 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private void command(int command){
+    private void readCommand(String data, int command, int c1, int c2, int c3, int dot){
+        switch (command){
+            case 1:
+                String name = data.substring(c1+1,c2);
+                String password = data.substring(c2+1,c3);
+                String dbID = data.substring(c3+1,dot);
+                Log.d(LOG_TAG, "name = " + name + " pass = " + password + " dbID = " + dbID);
+                break;
+        }
 
     }
+
 
     public String getLogin() {
         return login;

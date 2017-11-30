@@ -59,7 +59,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + FK_ROOM_ID + ") REFERENCES " + ROOM_TABLE_NAME + "(" + FK_ROOM_ID + ")" +
                 ");");
 
-        Log.d(LOG_TAG,"on created");
+        Log.d(LOG_TAG,"database on created");
     }
 
     @Override
