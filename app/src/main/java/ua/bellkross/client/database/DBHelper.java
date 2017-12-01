@@ -63,7 +63,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 TASK_DEADLINE + " DATETIME NOT NULL," +
                 TASK_COMMENTS + " TEXT NULL," +
                 FK_ROOM_ID + " INTEGER NOT NULL," +
-                "FOREIGN KEY (" + FK_ROOM_ID + ") REFERENCES " + ROOM_TABLE_NAME + "(" + FK_ROOM_ID + ")" +
+                "FOREIGN KEY (" + FK_ROOM_ID + ") REFERENCES " + ROOM_TABLE_NAME + "(" + ROOM_ID + ")" +
                 ");");
 
         Log.d(LOG_TAG,"database on create");

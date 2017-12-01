@@ -50,7 +50,7 @@ public class GridViewAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return ArrayListRooms.getInstance().get(position).getArrayListID();
+        return ArrayListRooms.getInstance().get(position).getServerDbID();
     }
 
     @Override
@@ -80,13 +80,12 @@ public class GridViewAdapter extends BaseAdapter {
 //        room.setServerDbID(0);
 //        room.setArrayListID(ArrayListRooms.getInstance().size());
 //        ArrayListRooms.getInstance().add(room);
-//        notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public void refresh(ArrayList<Room> rooms) {
         ArrayListRooms.getInstance().clear();
         ArrayListRooms.getInstance().addAll(DBHelper.getInstance().refresh(rooms));
-        Log.d(LOG_TAG, "SSSSS" + ArrayListRooms.getInstance().toString());
         RoomsActivity.getGridView().post(new Runnable() {
             @Override
             public void run() {
@@ -94,4 +93,5 @@ public class GridViewAdapter extends BaseAdapter {
             }
         });
     }
+
 }

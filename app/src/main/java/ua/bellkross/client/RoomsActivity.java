@@ -8,10 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.PasswordTransformationMethod;
 import android.text.method.TransformationMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -35,21 +37,19 @@ public class RoomsActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        GridViewAdapter.getInstance(this);
         gridView = findViewById(R.id.gvRooms);
-        gridView.setAdapter(GridViewAdapter.getInstance());
-
+        gridView.setAdapter(GridViewAdapter.getInstance(this));
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(LOG_TAG, ""+position);
+            }
+        });
         clientTask = new ClientTask(toolbar.getTitle().toString());
         clientTask.execute();
     }
 
-    public void refresh(){
-
-    }
-
     public void addRoom(View view) {
-        clientTask.push("7");
-
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         ConstraintLayout constraintLayout = (ConstraintLayout)
                 getLayoutInflater().inflate(R.layout.add_room_dialog, null);
@@ -71,8 +71,7 @@ public class RoomsActivity extends AppCompatActivity {
                 }
             }
         });
-//        dialog.show();
-        //GVA refresh
+        dialog.show();
     }
 
     @Override

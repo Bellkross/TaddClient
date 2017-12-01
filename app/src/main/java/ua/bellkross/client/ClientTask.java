@@ -49,7 +49,9 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             resend.execute();
             out = new PrintWriter(socket.getOutputStream(), true);
             push(login);
-        } catch (IOException e) {
+            Thread.sleep(100);
+            push("7");
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -118,7 +120,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                 String password = data.substring(c2 + 1, c3);
                 int dbID = Integer.parseInt(data.substring(c3 + 1, dot));
                 Log.d(LOG_TAG, "name = " + name + " pass = " + password + " dbID = " + dbID);
-                //DBHelper.getInstance().addRoom(dbID,name,password);
+                push("7");
                 break;
             case 7:
                 Log.d(LOG_TAG, "rooms = " + data.substring(1));
