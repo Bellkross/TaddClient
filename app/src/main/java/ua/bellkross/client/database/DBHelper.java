@@ -1,6 +1,7 @@
 package ua.bellkross.client.database;
 
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -8,6 +9,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import ua.bellkross.client.model.ArrayListRooms;
 import ua.bellkross.client.model.Room;
 import ua.bellkross.client.model.Task;
 
@@ -67,17 +69,78 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(LOG_TAG,"database on create");
     }
 
-    public void addRoom(final int dbID, final String name, final String password){
+    public int addTask(final Task task) {
         SQLiteDatabase db = getWritableDatabase();
-        String command = "INSERT INTO "+ROOM_TABLE_NAME+" ("+ROOM_SERVER_ID+','+ROOM_NAME+','+ROOM_PASSWORD+") " +
-        "VALUES (\'"+dbID+"\',\'"+name+"\',\'"+password+"\');";
-        db.execSQL(command);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TASK_SERVER_ID,task.getServerDbID());
+        contentValues.put(TASK_LIST_ID,task.getArrayListID());
+        contentValues.put(TASK_TEXT,task.getText());
+        contentValues.put(TASK_NAME_OF_CREATOR,task.getNameOfCreator());
+        contentValues.put(TASK_STATE,task.getState());
+        contentValues.put(TASK_DEADLINE,task.getDeadline().getTime());
+        contentValues.put(TASK_COMMENTS,task.getComments());
+        contentValues.put(FK_ROOM_ID,task.getRoomID());
+        int pos = (int) db.insert(TASK_TABLE_NAME, null, contentValues);
+
+        db.close();
+        return pos;
+    }
+
+    public int addRoom(final Room room){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ROOM_SERVER_ID, room.getServerDbID());
+        contentValues.put(ROOM_LIST_ID, room.getArrayListID());
+        contentValues.put(ROOM_NAME, room.getName());
+        contentValues.put(ROOM_PASSWORD, room.getPassword());
+        int pos = (int) db.insert(ROOM_TABLE_NAME,null,contentValues);
+        contentValues.clear();
+        db.close();
+        return pos;
+    }
+
+    public ArrayList<Room> refresh(ArrayList<Room> rooms){
+        this.clear();
+        int position = -1;
+        int pos;
+        SQLiteDatabase db = getWritableDatabase();
+        for (Room room:
+             rooms) {
+            room.setArrayListID(++position);
+            room.setDbID(addRoom(room));
+            pos = -1;
+            for (Task task:
+                 room.getTasks()) {
+                task.setArrayListID(++pos);
+                task.setDbID(addTask(task));
+            }
+        }
+        db.close();
+        return rooms;
+    }
+
+    public void clear(){
+        SQLiteDatabase db = getWritableDatabase();
+        for (Room room : ArrayListRooms.getInstance()){
+            deleteRoom(room.getDbID());
+            for (Task task:
+                 room.getTasks()) {
+                deleteTask(task.getDbID());
+            }
+        }
         db.close();
     }
 
-    public void refresh(ArrayList<Room> rooms, ArrayList<Task> tasks){
+    public void deleteTask(int id){
         SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM "+TASK_TABLE_NAME+" WHERE "+TASK_ID+" = "+id+";");
+        db.close();
+    }
 
+    public void deleteRoom(int id){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM "+ROOM_TABLE_NAME+" WHERE "+ROOM_ID+" = "+id+";");
         db.close();
     }
 

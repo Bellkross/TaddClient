@@ -1,5 +1,6 @@
 package ua.bellkross.client.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Task {
@@ -35,6 +36,7 @@ public class Task {
 
     @Override
     public String toString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         return "Task{" +
                 "dbID=" + dbID +
                 ", serverDbID=" + serverDbID +
@@ -43,7 +45,7 @@ public class Task {
                 ", text='" + text + '\'' +
                 ", nameOfCreator='" + nameOfCreator + '\'' +
                 ", state=" + state +
-                ", deadline=" + deadline +
+                ", deadline=" + sdf.format(deadline) +
                 ", comments='" + comments + '\'' +
                 '}';
     }

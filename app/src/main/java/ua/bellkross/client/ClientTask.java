@@ -102,7 +102,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                     Log.d(LOG_TAG, "command = " + command);
                     readCommand(str, command);
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 Log.d(LOG_TAG, "Ошибка при получении сообщения.");
                 e.printStackTrace();
             }
@@ -169,14 +169,30 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                         comments = task.getString("comments");
                         Task newTask = new Task(serverDbID,roomID,text,nameOfCreator,state,deadline,comments);
                         Log.d(LOG_TAG, "task = " + newTask.toString());
-                        //tasksAL.add();
+                        tasksAL.add(newTask);
                     }
 
                     JSONArray rooms = new JSONArray(data.substring(1));
+                    int serverDbIDr;
+                    String nameR;
+                    String passwordR;
                     for (int i = 0; i < rooms.length(); ++i) {
                         JSONObject room = (JSONObject) rooms.get(i);
+                        serverDbIDr = room.getInt("id");
+                        nameR = room.getString("name");
+                        passwordR = room.getString("pass");
                         Log.d(LOG_TAG, room + "");
+                        Room newRoom = new Room(nameR, passwordR, serverDbIDr);
+                        for (Task task : tasksAL) {
+                            if(task.getRoomID()==newRoom.getServerDbID()){
+                                newRoom.getTasks().add(task);
+                            }
+                        }
+                        Log.d(LOG_TAG, "new room = " + newRoom.toString());
+                        roomsAL.add(newRoom);
                     }
+
+                    //GridViewAdapter.getInstance().refresh(roomsAL);
                 } catch (JSONException e) {
                     Log.d(LOG_TAG,e.toString());
                 }

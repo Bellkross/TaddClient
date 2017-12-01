@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import ua.bellkross.client.database.DBHelper;
 import ua.bellkross.client.model.ArrayListRooms;
 import ua.bellkross.client.model.Room;
-import ua.bellkross.client.model.Task;
 
 public class GridViewAdapter extends BaseAdapter {
 
@@ -69,7 +69,8 @@ public class GridViewAdapter extends BaseAdapter {
         return gridview;
     }
 
-    public void add() {
+    public void add(Room room) {
+        room.setDbID(DBHelper.getInstance().addRoom(room));
 //        Room room = new Room("Room" + ArrayListRooms.getInstance().size(), "111");
 //        room.setDbID(0);
 //        room.setServerDbID(0);
@@ -78,7 +79,9 @@ public class GridViewAdapter extends BaseAdapter {
 //        notifyDataSetChanged();
     }
 
-    public void refresh(ArrayList<Room> rooms, ArrayList<Task> tasks){
-
+    public void refresh(ArrayList<Room> rooms) {
+        ArrayListRooms.getInstance().clear();
+        ArrayListRooms.getInstance().addAll(DBHelper.getInstance().refresh(rooms));
+        notifyDataSetChanged();
     }
 }

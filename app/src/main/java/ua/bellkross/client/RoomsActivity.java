@@ -43,6 +43,10 @@ public class RoomsActivity extends AppCompatActivity {
         clientTask.execute();
     }
 
+    public void refresh(){
+
+    }
+
     public void addRoom(View view) {
         clientTask.push("7");
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
