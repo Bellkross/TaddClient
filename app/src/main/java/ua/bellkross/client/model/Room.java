@@ -12,9 +12,10 @@ public class Room {
     private String password;
     private ArrayList<Task> tasks;
 
-    public Room(String name, String password) {
+    public Room(String name, String password, int serverDbID) {
         this.name = name;
         this.password = password;
+        this.serverDbID = serverDbID;
         this.tasks = new ArrayList<Task>();
     }
 

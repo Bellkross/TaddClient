@@ -8,8 +8,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import ua.bellkross.client.model.ArrayListRooms;
 import ua.bellkross.client.model.Room;
+import ua.bellkross.client.model.Task;
 
 public class GridViewAdapter extends BaseAdapter {
 
@@ -67,11 +70,15 @@ public class GridViewAdapter extends BaseAdapter {
     }
 
     public void add() {
-        Room room = new Room("Room" + ArrayListRooms.getInstance().size(), "111");
-        room.setDbID(0);
-        room.setServerDbID(0);
-        room.setArrayListID(ArrayListRooms.getInstance().size());
-        ArrayListRooms.getInstance().add(room);
-        notifyDataSetChanged();
+//        Room room = new Room("Room" + ArrayListRooms.getInstance().size(), "111");
+//        room.setDbID(0);
+//        room.setServerDbID(0);
+//        room.setArrayListID(ArrayListRooms.getInstance().size());
+//        ArrayListRooms.getInstance().add(room);
+//        notifyDataSetChanged();
+    }
+
+    public void refresh(ArrayList<Room> rooms, ArrayList<Task> tasks){
+
     }
 }

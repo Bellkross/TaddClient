@@ -3,12 +3,23 @@ package ua.bellkross.client;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import ua.bellkross.client.model.Room;
+import ua.bellkross.client.model.Task;
 
 import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 
@@ -30,14 +41,12 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-            Log.d(LOG_TAG, "Connected to socket...");
             InetAddress ipAddress = InetAddress.getByName(IP);
 
             this.socket = new Socket(ipAddress, PORT);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             resend = new Resender();
             resend.start();
-            Log.d(LOG_TAG, "resender started");
             out = new PrintWriter(socket.getOutputStream(), true);
             push(login);
         } catch (IOException e) {
@@ -89,30 +98,88 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             try {
                 while (!stoped) {
                     final String str = in.readLine();
-                    Log.d(LOG_TAG, str);
-                    int command = Integer.parseInt(str.substring(0,1));
-                    int comma1 = str.indexOf(',',0);
-                    int comma2 = str.indexOf(',',comma1+1);
-                    int comma3 = str.indexOf(',',comma2+1);
-                    int dot = str.indexOf('.',comma3+1);
-                    Log.d(LOG_TAG, "command = " + command + ", c1 = " + comma1 +
-                            " c2 = " + comma2 + " c3 = " + comma3 + " dot = " + dot);
-                    readCommand(str, command,comma1,comma2,comma3,dot);
+                    int command = Integer.parseInt(str.substring(0, 1));
+                    Log.d(LOG_TAG, "command = " + command);
+                    readCommand(str, command);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.d(LOG_TAG, "Ошибка при получении сообщения.");
                 e.printStackTrace();
             }
         }
     }
 
-    private void readCommand(String data, int command, int c1, int c2, int c3, int dot){
-        switch (command){
+    private void readCommand(String data, int command) {
+        int c1;
+        int c2;
+        int c3;
+        int dot;
+
+        switch (command) {
             case 1:
-                String name = data.substring(c1+1,c2);
-                String password = data.substring(c2+1,c3);
-                String dbID = data.substring(c3+1,dot);
+                c1 = data.indexOf(',', 0);
+                c2 = data.indexOf(',', c1 + 1);
+                c3 = data.indexOf(',', c2 + 1);
+                dot = data.indexOf('.', c3 + 1);
+
+                String name = data.substring(c1 + 1, c2);
+                String password = data.substring(c2 + 1, c3);
+                int dbID = Integer.parseInt(data.substring(c3 + 1, dot));
                 Log.d(LOG_TAG, "name = " + name + " pass = " + password + " dbID = " + dbID);
+                //DBHelper.getInstance().addRoom(dbID,name,password);
+                break;
+            case 7:
+                Log.d(LOG_TAG, "rooms = " + data.substring(1));
+                String data2 = "";
+                try {
+                    data2 = in.readLine();
+                } catch (IOException e) {
+                    Log.d(LOG_TAG, e.toString());
+                }
+                Log.d(LOG_TAG, "tasks = " + data2);
+
+                ArrayList<Room> roomsAL = new ArrayList<>();
+                ArrayList<Task> tasksAL = new ArrayList<>();
+
+                try {
+                    JSONArray tasks = new JSONArray(data2);
+                    int serverDbID;
+                    int roomID;
+                    String text, nameOfCreator;
+                    int state;
+                    Date deadline=null;
+                    String comments;
+                    for (int i = 0; i < tasks.length(); ++i) {
+                        JSONObject task = (JSONObject) tasks.get(i);
+                        Log.d(LOG_TAG, task + "");
+                        serverDbID = task.getInt("id");
+                        roomID = task.getInt("fk");
+                        text = task.getString("text");
+                        nameOfCreator = task.getString("nameOC");
+                        state = task.getInt("state");
+                        try {
+                            String dateStr = task.getString("deadline");
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                            Date dlDate = sdf.parse(dateStr);
+                            deadline = dlDate;
+                        } catch (ParseException e) {
+                            Log.d(LOG_TAG, e.toString());
+                            e.printStackTrace();
+                        }
+                        comments = task.getString("comments");
+                        Task newTask = new Task(serverDbID,roomID,text,nameOfCreator,state,deadline,comments);
+                        Log.d(LOG_TAG, "task = " + newTask.toString());
+                        //tasksAL.add();
+                    }
+
+                    JSONArray rooms = new JSONArray(data.substring(1));
+                    for (int i = 0; i < rooms.length(); ++i) {
+                        JSONObject room = (JSONObject) rooms.get(i);
+                        Log.d(LOG_TAG, room + "");
+                    }
+                } catch (JSONException e) {
+                    Log.d(LOG_TAG,e.toString());
+                }
                 break;
         }
 

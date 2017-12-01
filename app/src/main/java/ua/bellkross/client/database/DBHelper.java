@@ -6,6 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
+import ua.bellkross.client.model.Room;
+import ua.bellkross.client.model.Task;
+
 import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -59,7 +64,21 @@ public class DBHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + FK_ROOM_ID + ") REFERENCES " + ROOM_TABLE_NAME + "(" + FK_ROOM_ID + ")" +
                 ");");
 
-        Log.d(LOG_TAG,"database on created");
+        Log.d(LOG_TAG,"database on create");
+    }
+
+    public void addRoom(final int dbID, final String name, final String password){
+        SQLiteDatabase db = getWritableDatabase();
+        String command = "INSERT INTO "+ROOM_TABLE_NAME+" ("+ROOM_SERVER_ID+','+ROOM_NAME+','+ROOM_PASSWORD+") " +
+        "VALUES (\'"+dbID+"\',\'"+name+"\',\'"+password+"\');";
+        db.execSQL(command);
+        db.close();
+    }
+
+    public void refresh(ArrayList<Room> rooms, ArrayList<Task> tasks){
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.close();
     }
 
     @Override

@@ -44,6 +44,7 @@ public class RoomsActivity extends AppCompatActivity {
     }
 
     public void addRoom(View view) {
+        clientTask.push("7");
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         ConstraintLayout constraintLayout = (ConstraintLayout)
                 getLayoutInflater().inflate(R.layout.add_room_dialog, null);
@@ -65,7 +66,7 @@ public class RoomsActivity extends AppCompatActivity {
                 }
             }
         });
-        dialog.show();
+//        dialog.show();
         //GVA refresh
     }
 

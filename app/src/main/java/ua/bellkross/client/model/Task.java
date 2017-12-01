@@ -1,6 +1,6 @@
 package ua.bellkross.client.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Task {
 
@@ -14,7 +14,8 @@ public class Task {
     private Date deadline;
     private String comments;
 
-    public Task(int roomID, String text, String nameOfCreator, int state, Date deadline) {
+    public Task(int serverDbID, int roomID, String text, String nameOfCreator, int state, Date deadline) {
+        this.serverDbID = serverDbID;
         this.roomID = roomID;
         this.text = text;
         this.nameOfCreator = nameOfCreator;
@@ -22,7 +23,8 @@ public class Task {
         this.deadline = deadline;
     }
 
-    public Task(int roomID, String text, String nameOfCreator, int state, Date deadline, String comments) {
+    public Task(int serverDbID, int roomID, String text, String nameOfCreator, int state, Date deadline, String comments) {
+        this.serverDbID = serverDbID;
         this.roomID = roomID;
         this.text = text;
         this.nameOfCreator = nameOfCreator;
