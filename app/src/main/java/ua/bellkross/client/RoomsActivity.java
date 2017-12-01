@@ -23,7 +23,7 @@ public class RoomsActivity extends AppCompatActivity {
     public static String LOG_TAG = "debug";
 
     private Toolbar toolbar;
-    private GridView gridView;
+    private static GridView gridView;
     private ClientTask clientTask;
 
     @Override
@@ -49,6 +49,7 @@ public class RoomsActivity extends AppCompatActivity {
 
     public void addRoom(View view) {
         clientTask.push("7");
+
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         ConstraintLayout constraintLayout = (ConstraintLayout)
                 getLayoutInflater().inflate(R.layout.add_room_dialog, null);
@@ -112,6 +113,10 @@ public class RoomsActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_rooms, menu);
         return true;
+    }
+
+    public static GridView getGridView() {
+        return gridView;
     }
 
 }

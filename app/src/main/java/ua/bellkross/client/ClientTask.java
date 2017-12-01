@@ -46,7 +46,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             this.socket = new Socket(ipAddress, PORT);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             resend = new Resender();
-            resend.start();
+            resend.execute();
             out = new PrintWriter(socket.getOutputStream(), true);
             push(login);
         } catch (IOException e) {
@@ -65,15 +65,6 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         Log.d(LOG_TAG, "message \"" + message + "\" pushed");
     }
 
-    @Override
-    protected void onProgressUpdate(Void... voids) {
-    }
-
-    @Override
-    protected void onPostExecute(Void unused) {
-
-    }
-
     public void close() {
         try {
             resend.setStop();
@@ -85,7 +76,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private class Resender extends Thread {
+    private class Resender extends AsyncTask<Void,Void,Void> {
 
         private boolean stoped;
 
@@ -94,7 +85,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         }
 
         @Override
-        public void run() {
+        protected Void doInBackground(Void... voids) {
             try {
                 while (!stoped) {
                     final String str = in.readLine();
@@ -106,6 +97,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                 Log.d(LOG_TAG, "Ошибка при получении сообщения.");
                 e.printStackTrace();
             }
+            return null;
         }
     }
 
@@ -192,7 +184,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                         roomsAL.add(newRoom);
                     }
 
-                    //GridViewAdapter.getInstance().refresh(roomsAL);
+                    GridViewAdapter.getInstance().refresh(roomsAL);
                 } catch (JSONException e) {
                     Log.d(LOG_TAG,e.toString());
                 }
@@ -200,6 +192,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         }
 
     }
+
 
 
     public String getLogin() {

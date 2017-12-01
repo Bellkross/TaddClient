@@ -2,6 +2,7 @@ package ua.bellkross.client;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import java.util.ArrayList;
 import ua.bellkross.client.database.DBHelper;
 import ua.bellkross.client.model.ArrayListRooms;
 import ua.bellkross.client.model.Room;
+
+import static ua.bellkross.client.RoomsActivity.LOG_TAG;
+import static ua.bellkross.client.RoomsActivity.getGridView;
 
 public class GridViewAdapter extends BaseAdapter {
 
@@ -82,6 +86,12 @@ public class GridViewAdapter extends BaseAdapter {
     public void refresh(ArrayList<Room> rooms) {
         ArrayListRooms.getInstance().clear();
         ArrayListRooms.getInstance().addAll(DBHelper.getInstance().refresh(rooms));
-        notifyDataSetChanged();
+        Log.d(LOG_TAG, "SSSSS" + ArrayListRooms.getInstance().toString());
+        RoomsActivity.getGridView().post(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 }
