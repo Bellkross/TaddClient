@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Client</string>
     <string name="user_name">Unnamed</string>
+    <string name="room_name">Room name</string>
     <string name="action_changeName">change name</string>
     <string name="ok">ok</string>
     <string name="cancel">cancel</string>

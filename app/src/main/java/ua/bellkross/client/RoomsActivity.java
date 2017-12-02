@@ -2,12 +2,11 @@ package ua.bellkross.client;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.method.PasswordTransformationMethod;
-import android.text.method.TransformationMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +18,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import ua.bellkross.client.database.DBHelper;
+import ua.bellkross.client.model.ArrayListRooms;
 
 public class RoomsActivity extends AppCompatActivity {
 
@@ -42,7 +42,10 @@ public class RoomsActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(LOG_TAG, ""+position);
+                Log.d(LOG_TAG, "" + position);
+                Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
+                intent.putExtra("RoomID", position);
+                startActivity(intent);
             }
         });
         clientTask = new ClientTask(toolbar.getTitle().toString());
@@ -60,12 +63,12 @@ public class RoomsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = etName.getText().toString()
-                        .replaceAll(",","").replaceAll(" ", ""),
+                        .replaceAll(",", "").replaceAll(" ", ""),
                         password = etPassword.getText().toString()
-                                .replaceAll(",","").replaceAll(" ", "");
-                if(!name.isEmpty() && !password.isEmpty()) {
+                                .replaceAll(",", "").replaceAll(" ", "");
+                if (!name.isEmpty() && !password.isEmpty()) {
                     clientTask.push("1" + ',' + name + ',' + password + '.');
-                }else {
+                } else {
                     String toastText = "Room wasn't created input pass & name !";
                     Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT).show();
                 }
