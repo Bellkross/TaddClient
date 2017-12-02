@@ -12,31 +12,27 @@ public class Task {
     private String text;
     private String nameOfCreator;
     private int state;
-    private Date deadline;
     private String comments;
 
-    public Task(int serverDbID, int roomID, String text, String nameOfCreator, int state, Date deadline) {
+    public Task(int serverDbID, int roomID, String text, String nameOfCreator, int state) {
         this.serverDbID = serverDbID;
         this.roomID = roomID;
         this.text = text;
         this.nameOfCreator = nameOfCreator;
         this.state = state;
-        this.deadline = deadline;
     }
 
-    public Task(int serverDbID, int roomID, String text, String nameOfCreator, int state, Date deadline, String comments) {
+    public Task(int serverDbID, int roomID, String text, String nameOfCreator, int state, String comments) {
         this.serverDbID = serverDbID;
         this.roomID = roomID;
         this.text = text;
         this.nameOfCreator = nameOfCreator;
         this.state = state;
-        this.deadline = deadline;
         this.comments = comments;
     }
 
     @Override
     public String toString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         return "Task{" +
                 "dbID=" + dbID +
                 ", serverDbID=" + serverDbID +
@@ -45,7 +41,6 @@ public class Task {
                 ", text='" + text + '\'' +
                 ", nameOfCreator='" + nameOfCreator + '\'' +
                 ", state=" + state +
-                ", deadline=" + sdf.format(deadline) +
                 ", comments='" + comments + '\'' +
                 '}';
     }
@@ -104,14 +99,6 @@ public class Task {
 
     public void setState(int state) {
         this.state = state;
-    }
-
-    public Date getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(Date deadline) {
-        this.deadline = deadline;
     }
 
     public String getComments() {

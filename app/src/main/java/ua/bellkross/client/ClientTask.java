@@ -13,11 +13,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import ua.bellkross.client.adapters.ArrayListRooms;
+import ua.bellkross.client.adapters.GridViewAdapter;
+import ua.bellkross.client.database.DBHelper;
 import ua.bellkross.client.model.Room;
 import ua.bellkross.client.model.Task;
 
@@ -33,9 +36,21 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
     private PrintWriter out;
     private Resender resend;
     private String login;
+    private boolean refreshWithoutNotify = false;
+
+    private static ClientTask instance;
 
     public ClientTask(String login) {
         this.login = login;
+        instance = this;
+    }
+
+    public static ClientTask getInstance(String login) {
+        return instance == null ? new ClientTask(login) : instance;
+    }
+
+    public static ClientTask getInstance() {
+        return instance;
     }
 
     @Override
@@ -78,7 +93,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private class Resender extends AsyncTask<Void,Void,Void> {
+    private class Resender extends AsyncTask<Void, Void, Void> {
 
         private boolean stoped;
 
@@ -122,6 +137,9 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                 Log.d(LOG_TAG, "name = " + name + " pass = " + password + " dbID = " + dbID);
                 push("7");
                 break;
+            case 2:
+                push("7");
+                break;
             case 7:
                 Log.d(LOG_TAG, "rooms = " + data.substring(1));
                 String data2 = "";
@@ -141,7 +159,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                     int roomID;
                     String text, nameOfCreator;
                     int state;
-                    Date deadline=null;
+                    Date deadline = null;
                     String comments;
                     for (int i = 0; i < tasks.length(); ++i) {
                         JSONObject task = (JSONObject) tasks.get(i);
@@ -151,17 +169,8 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                         text = task.getString("text");
                         nameOfCreator = task.getString("nameOC");
                         state = task.getInt("state");
-                        try {
-                            String dateStr = task.getString("deadline");
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                            Date dlDate = sdf.parse(dateStr);
-                            deadline = dlDate;
-                        } catch (ParseException e) {
-                            Log.d(LOG_TAG, e.toString());
-                            e.printStackTrace();
-                        }
                         comments = task.getString("comments");
-                        Task newTask = new Task(serverDbID,roomID,text,nameOfCreator,state,deadline,comments);
+                        Task newTask = new Task(serverDbID, roomID, text, nameOfCreator, state, comments);
                         Log.d(LOG_TAG, "task = " + newTask.toString());
                         tasksAL.add(newTask);
                     }
@@ -178,7 +187,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                         Log.d(LOG_TAG, room + "");
                         Room newRoom = new Room(nameR, passwordR, serverDbIDr);
                         for (Task task : tasksAL) {
-                            if(task.getRoomID()==newRoom.getServerDbID()){
+                            if (task.getRoomID() == newRoom.getServerDbID()) {
                                 newRoom.getTasks().add(task);
                             }
                         }
@@ -186,16 +195,28 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                         roomsAL.add(newRoom);
                     }
 
-                    GridViewAdapter.getInstance().refresh(roomsAL);
+                    if(refreshWithoutNotify) {
+                        refreshWithoutNotify(roomsAL);
+                        refreshWithoutNotify = false;
+                    }else{
+                        GridViewAdapter.getInstance().refresh(roomsAL);
+                    }
                 } catch (JSONException e) {
-                    Log.d(LOG_TAG,e.toString());
+                    Log.d(LOG_TAG, e.toString());
                 }
                 break;
         }
 
     }
 
+    private void refreshWithoutNotify(ArrayList<Room> rooms) {
+        ArrayListRooms.getInstance().clear();
+        ArrayListRooms.getInstance().addAll(DBHelper.getInstance().refresh(rooms));
+    }
 
+    public void setRefreshWithoutNotify(boolean refreshWithoutNotify) {
+        this.refreshWithoutNotify = refreshWithoutNotify;
+    }
 
     public String getLogin() {
         return login;

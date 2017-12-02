@@ -17,8 +17,8 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import ua.bellkross.client.adapters.GridViewAdapter;
 import ua.bellkross.client.database.DBHelper;
-import ua.bellkross.client.model.ArrayListRooms;
 
 public class RoomsActivity extends AppCompatActivity {
 
@@ -26,7 +26,6 @@ public class RoomsActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private static GridView gridView;
-    private ClientTask clientTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +47,8 @@ public class RoomsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        clientTask = new ClientTask(toolbar.getTitle().toString());
-        clientTask.execute();
+        ClientTask.getInstance(toolbar.getTitle().toString());
+        ClientTask.getInstance().execute();
     }
 
     public void addRoom(View view) {
@@ -67,7 +66,7 @@ public class RoomsActivity extends AppCompatActivity {
                         password = etPassword.getText().toString()
                                 .replaceAll(",", "").replaceAll(" ", "");
                 if (!name.isEmpty() && !password.isEmpty()) {
-                    clientTask.push("1" + ',' + name + ',' + password + '.');
+                    ClientTask.getInstance().push("1" + ',' + name + ',' + password + '.');
                 } else {
                     String toastText = "Room wasn't created input pass & name !";
                     Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT).show();
@@ -90,19 +89,19 @@ public class RoomsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String name = etName.getText().toString();
                         toolbar.setTitle(name);
-                        clientTask.setLogin(name);
-                        clientTask.push(name);
+                        ClientTask.getInstance().setLogin(name);
+                        ClientTask.getInstance().push(name);
                     }
                 });
                 dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
                         String name = "Unnamed";
-                        clientTask.push(name);
-                        clientTask.setLogin(name);
+                        ClientTask.getInstance().push(name);
+                        ClientTask.getInstance().setLogin(name);
                     }
                 });
-                clientTask.push("8");
+                ClientTask.getInstance().push("8");
                 dialog.show();
                 break;
         }

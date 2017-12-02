@@ -9,7 +9,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import ua.bellkross.client.model.ArrayListRooms;
+import ua.bellkross.client.adapters.ArrayListRooms;
 import ua.bellkross.client.model.Room;
 import ua.bellkross.client.model.Task;
 
@@ -34,7 +34,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static String TASK_TEXT = "TASK_TEXT";
     public static String TASK_NAME_OF_CREATOR = "TASK_NAME_OF_CREATOR";
     public static String TASK_STATE = "TASK_STATE";
-    public static String TASK_DEADLINE = "TASK_DEADLINE";
     public static String TASK_COMMENTS = "TASK_COMMENTS";
     public static DBHelper instance;
 
@@ -60,7 +59,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 TASK_TEXT + " TEXT NOT NULL," +
                 TASK_NAME_OF_CREATOR + " TEXT NOT NULL," +
                 TASK_STATE + " INTEGER NOT NULL," +
-                TASK_DEADLINE + " DATETIME NOT NULL," +
                 TASK_COMMENTS + " TEXT NULL," +
                 FK_ROOM_ID + " INTEGER NOT NULL," +
                 "FOREIGN KEY (" + FK_ROOM_ID + ") REFERENCES " + ROOM_TABLE_NAME + "(" + ROOM_ID + ")" +
@@ -77,7 +75,6 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(TASK_TEXT,task.getText());
         contentValues.put(TASK_NAME_OF_CREATOR,task.getNameOfCreator());
         contentValues.put(TASK_STATE,task.getState());
-        contentValues.put(TASK_DEADLINE,task.getDeadline().getTime());
         contentValues.put(TASK_COMMENTS,task.getComments());
         contentValues.put(FK_ROOM_ID,task.getRoomID());
         int pos = (int) db.insert(TASK_TABLE_NAME, null, contentValues);

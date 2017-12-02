@@ -1,7 +1,9 @@
-package ua.bellkross.client.model;
+package ua.bellkross.client.adapters;
 
 
 import java.util.ArrayList;
+
+import ua.bellkross.client.model.Room;
 
 public class ArrayListRooms {
 

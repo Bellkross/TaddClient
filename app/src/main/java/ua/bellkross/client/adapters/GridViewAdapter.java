@@ -1,8 +1,7 @@
-package ua.bellkross.client;
+package ua.bellkross.client.adapters;
 
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +10,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import ua.bellkross.client.R;
+import ua.bellkross.client.RoomsActivity;
 import ua.bellkross.client.database.DBHelper;
-import ua.bellkross.client.model.ArrayListRooms;
 import ua.bellkross.client.model.Room;
-
-import static ua.bellkross.client.RoomsActivity.LOG_TAG;
-import static ua.bellkross.client.RoomsActivity.getGridView;
 
 public class GridViewAdapter extends BaseAdapter {
 

@@ -5,4 +5,9 @@
     <string name="action_changeName">change name</string>
     <string name="ok">ok</string>
     <string name="cancel">cancel</string>
+    <string name="choose_date">Choose date</string>
+    <string name="choose_time">Choose time</string>
+    <string name="ready">Ok</string>
+    <string name="eam_accept">accept</string>
+    <string name="et_input_task_hint">Input ur task</string>
 </resources>
