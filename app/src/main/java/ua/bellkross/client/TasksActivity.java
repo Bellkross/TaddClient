@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -23,40 +25,59 @@ import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 public class TasksActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private Room room;
-    private ArrayList<Task> tasks;
     private static RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private EditText etInputTask;
-
+    private int roomID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks);
-        int roomID = getIntent().getIntExtra("RoomID",-1);
-        room = ArrayListRooms.getInstance().get(roomID);
-        tasks = room.getTasks();
-        Log.d(LOG_TAG, "l = " + tasks.size());
+        roomID = getIntent().getIntExtra("RoomID",-1);
+        Log.d(LOG_TAG, "l = " + ArrayListRooms.getInstance().get(roomID).getTasks().size());
 
         toolbar = findViewById(R.id.toolbar_tasks);
-        toolbar.setTitle(room.getName());
+        toolbar.setTitle(ArrayListRooms.getInstance().get(roomID).getName());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        adapter = new RecyclerViewAdapter(this, tasks,
+        adapter = new RecyclerViewAdapter(this, ArrayListRooms.getInstance().get(roomID).getTasks(),
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         int recyclerViewPosition = recyclerView.getChildAdapterPosition(v);
-                        Log.d(LOG_TAG, recyclerViewPosition+"");
+                        Task task = ArrayListRooms.getInstance().get(roomID).
+                                getTasks().get(recyclerViewPosition);
+                        Log.d(LOG_TAG, "before state = " + task.getState());
+                        if (task.getState()==1){
+                            task.setState(0);
+                        }else if(task.getState()==0){
+                            task.setState(1);
+                        }
+                        Log.d(LOG_TAG, "after state = " + task.getState());
+                        String taskText = task.getText();
+                        ClientTask.getInstance().push("3,"+task.getServerDbID() +
+                                ','+taskText+','+task.getNameOfCreator()+
+                                ','+task.getState()+','+"no comments.");
+                        adapter.refresh(ArrayListRooms.getInstance().get(roomID).getTasks());
                     }
                 },
                 new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
                         int recyclerViewPosition = recyclerView.getChildAdapterPosition(v);
-                        Log.d(LOG_TAG, recyclerViewPosition+"");
+                        Task task = ArrayListRooms.getInstance().get(roomID).
+                                getTasks().get(recyclerViewPosition);
+                        int size = ArrayListRooms.getInstance().get(roomID).
+                                getTasks().size();
+                        deleteTask(task.getServerDbID());
+                        Log.d(LOG_TAG, recyclerViewPosition+":sop vr");
+                        if(size!=1) {
+                            adapter.refresh(ArrayListRooms.getInstance().get(roomID).getTasks());
+                        }else {
+                            adapter.refresh(new ArrayList<Task>());
+                        }
                         return true;
                     }
                 });
@@ -73,8 +94,12 @@ public class TasksActivity extends AppCompatActivity {
                 String task = etInputTask.getText().toString();
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)
                         && !task.equalsIgnoreCase("")) {
-                    addTask();
-                    etInputTask.setText("");
+                    if(!task.contains(",")) {
+                        addTask();
+                        etInputTask.setText("");
+                    }else {
+                        etInputTask.setText("");
+                    }
                     return true;
                 }
                 return false;
@@ -82,36 +107,46 @@ public class TasksActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        adapter.notifyDataSetChanged();
-    }
-
     public static RecyclerView getRecyclerView() {
         return recyclerView;
     }
 
     public void addTask(){
-        ClientTask.getInstance().setRefreshWithoutNotify(true);
         String task = etInputTask.getText().toString();
-        ClientTask.getInstance().push("2,"+room.getServerDbID()+','+task+','+ClientTask.getInstance().getLogin()+
+        ClientTask.getInstance().setRefreshWithoutNotify(true);
+        ClientTask.getInstance().push("2,"+ArrayListRooms.getInstance().get(roomID).getServerDbID()+','+task+','+ClientTask.getInstance().getLogin()+
                 ','+'0'+','+"no comments.");
         try {
-            Thread.sleep(1000);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        adapter.refresh(ArrayListRooms.getInstance().get(roomID).getTasks());
+    }
 
-        //Task task;
-        //adapter.addTask();
+    public void deleteTask(int taskID){
+        ClientTask.getInstance().push("4,"+taskID+".");
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finishAndRemoveTask();
+        } else {
+            adapter.refresh(ArrayListRooms.getInstance().get(roomID).getTasks());
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_tasks, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

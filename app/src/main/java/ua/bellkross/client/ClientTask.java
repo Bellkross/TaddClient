@@ -28,7 +28,7 @@ import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 
 public class ClientTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String IP = "192.168.0.102";
+    public static final String IP = "192.168.0.104";
     public static final int PORT = 5000;
 
     private Socket socket;
@@ -134,21 +134,18 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                 String name = data.substring(c1 + 1, c2);
                 String password = data.substring(c2 + 1, c3);
                 int dbID = Integer.parseInt(data.substring(c3 + 1, dot));
-                Log.d(LOG_TAG, "name = " + name + " pass = " + password + " dbID = " + dbID);
-                push("7");
-                break;
             case 2:
+            case 3:
+            case 4:
                 push("7");
                 break;
             case 7:
-                Log.d(LOG_TAG, "rooms = " + data.substring(1));
                 String data2 = "";
                 try {
                     data2 = in.readLine();
                 } catch (IOException e) {
                     Log.d(LOG_TAG, e.toString());
                 }
-                Log.d(LOG_TAG, "tasks = " + data2);
 
                 ArrayList<Room> roomsAL = new ArrayList<>();
                 ArrayList<Task> tasksAL = new ArrayList<>();
@@ -159,11 +156,9 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                     int roomID;
                     String text, nameOfCreator;
                     int state;
-                    Date deadline = null;
                     String comments;
                     for (int i = 0; i < tasks.length(); ++i) {
                         JSONObject task = (JSONObject) tasks.get(i);
-                        Log.d(LOG_TAG, task + "");
                         serverDbID = task.getInt("id");
                         roomID = task.getInt("fk");
                         text = task.getString("text");
@@ -171,7 +166,6 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                         state = task.getInt("state");
                         comments = task.getString("comments");
                         Task newTask = new Task(serverDbID, roomID, text, nameOfCreator, state, comments);
-                        Log.d(LOG_TAG, "task = " + newTask.toString());
                         tasksAL.add(newTask);
                     }
 
@@ -184,14 +178,12 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                         serverDbIDr = room.getInt("id");
                         nameR = room.getString("name");
                         passwordR = room.getString("pass");
-                        Log.d(LOG_TAG, room + "");
                         Room newRoom = new Room(nameR, passwordR, serverDbIDr);
                         for (Task task : tasksAL) {
                             if (task.getRoomID() == newRoom.getServerDbID()) {
                                 newRoom.getTasks().add(task);
                             }
                         }
-                        Log.d(LOG_TAG, "new room = " + newRoom.toString());
                         roomsAL.add(newRoom);
                     }
 
@@ -212,6 +204,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
     private void refreshWithoutNotify(ArrayList<Room> rooms) {
         ArrayListRooms.getInstance().clear();
         ArrayListRooms.getInstance().addAll(DBHelper.getInstance().refresh(rooms));
+        Log.d(LOG_TAG,"method rwoutn alr" + ArrayListRooms.getInstance().get(0).getTasks());
     }
 
     public void setRefreshWithoutNotify(boolean refreshWithoutNotify) {

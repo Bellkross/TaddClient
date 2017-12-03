@@ -17,8 +17,10 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import ua.bellkross.client.adapters.ArrayListRooms;
 import ua.bellkross.client.adapters.GridViewAdapter;
 import ua.bellkross.client.database.DBHelper;
+import ua.bellkross.client.model.Room;
 
 public class RoomsActivity extends AppCompatActivity {
 
@@ -40,11 +42,29 @@ public class RoomsActivity extends AppCompatActivity {
         gridView.setAdapter(GridViewAdapter.getInstance(this));
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 Log.d(LOG_TAG, "" + position);
-                Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
-                intent.putExtra("RoomID", position);
-                startActivity(intent);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(RoomsActivity.this);
+                ConstraintLayout constraintLayout = (ConstraintLayout)
+                        getLayoutInflater().inflate(R.layout.password_dialog, null);
+                final EditText etInpPass = constraintLayout.findViewById(R.id.etInpPass);
+                dialog.setView(constraintLayout);
+                dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String ipassword = etInpPass.getText().toString();
+                        String password = ArrayListRooms.getInstance().get(position).getPassword();
+                        if (ipassword.equals(password)) {
+                            Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
+                            intent.putExtra("RoomID", position);
+                            startActivity(intent);
+                        } else {
+                            String toastText = "wrong password";
+                            Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                dialog.show();
             }
         });
         ClientTask.getInstance(toolbar.getTitle().toString());
@@ -55,7 +75,7 @@ public class RoomsActivity extends AppCompatActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         ConstraintLayout constraintLayout = (ConstraintLayout)
                 getLayoutInflater().inflate(R.layout.add_room_dialog, null);
-        final EditText etName = constraintLayout.findViewById(R.id.etName);
+        final EditText etName = constraintLayout.findViewById(R.id.tvName);
         final EditText etPassword = constraintLayout.findViewById(R.id.etPassword);
         dialog.setView(constraintLayout);
         dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -103,6 +123,9 @@ public class RoomsActivity extends AppCompatActivity {
                 });
                 ClientTask.getInstance().push("8");
                 dialog.show();
+                break;
+            case R.id.action_refresh_rooms:
+                ClientTask.getInstance().push("7");
                 break;
         }
         return super.onOptionsItemSelected(item);
