@@ -55,12 +55,12 @@ public class RoomsActivity extends AppCompatActivity {
                         String ipassword = etInpPass.getText().toString();
                         String password = ArrayListRooms.getInstance().get(position).getPassword();
                         if (ipassword.equals(password)) {
-                            Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
+                            Intent intent = new Intent(RoomsActivity.this, TasksActivity.class);
                             intent.putExtra("RoomID", position);
                             startActivity(intent);
                         } else {
                             String toastText = "wrong password";
-                            Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RoomsActivity.this, toastText, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

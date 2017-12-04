@@ -82,7 +82,7 @@ public class Room {
     }
 
     public ArrayList<Task> getTasks() {
-        return tasks;
+        return tasks==null? new ArrayList<Task>() : tasks;
     }
 
     public void setTasks(ArrayList<Task> tasks) {

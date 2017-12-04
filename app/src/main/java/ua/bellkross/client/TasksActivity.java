@@ -1,7 +1,7 @@
 package ua.bellkross.client;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,11 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.ArrayList;
-
 import ua.bellkross.client.adapters.ArrayListRooms;
 import ua.bellkross.client.adapters.RecyclerViewAdapter;
-import ua.bellkross.client.model.Room;
 import ua.bellkross.client.model.Task;
 
 import static ua.bellkross.client.RoomsActivity.LOG_TAG;
@@ -29,11 +26,12 @@ public class TasksActivity extends AppCompatActivity {
     private RecyclerViewAdapter adapter;
     private EditText etInputTask;
     private int roomID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks);
-        roomID = getIntent().getIntExtra("RoomID",-1);
+        roomID = getIntent().getIntExtra("RoomID", -1);
         Log.d(LOG_TAG, "l = " + ArrayListRooms.getInstance().get(roomID).getTasks().size());
 
         toolbar = findViewById(R.id.toolbar_tasks);
@@ -50,17 +48,18 @@ public class TasksActivity extends AppCompatActivity {
                         Task task = ArrayListRooms.getInstance().get(roomID).
                                 getTasks().get(recyclerViewPosition);
                         Log.d(LOG_TAG, "before state = " + task.getState());
-                        if (task.getState()==1){
+                        if (task.getState() == 1) {
                             task.setState(0);
-                        }else if(task.getState()==0){
+                        } else if (task.getState() == 0) {
                             task.setState(1);
                         }
                         Log.d(LOG_TAG, "after state = " + task.getState());
                         String taskText = task.getText();
-                        ClientTask.getInstance().push("3,"+task.getServerDbID() +
-                                ','+taskText+','+task.getNameOfCreator()+
-                                ','+task.getState()+','+"no comments.");
-                        adapter.refresh(ArrayListRooms.getInstance().get(roomID).getTasks());
+                        ClientTask.getInstance().push("3," + task.getServerDbID() +
+                                ',' + taskText + ',' + task.getNameOfCreator() +
+                                ',' + task.getState() + ',' + "no comments.");
+                        ClientTask.getInstance().setRefreshWithoutNotify(true);
+                        adapter.refresh(roomID);
                     }
                 },
                 new View.OnLongClickListener() {
@@ -72,12 +71,9 @@ public class TasksActivity extends AppCompatActivity {
                         int size = ArrayListRooms.getInstance().get(roomID).
                                 getTasks().size();
                         deleteTask(task.getServerDbID());
-                        Log.d(LOG_TAG, recyclerViewPosition+":sop vr");
-                        if(size!=1) {
-                            adapter.refresh(ArrayListRooms.getInstance().get(roomID).getTasks());
-                        }else {
-                            adapter.refresh(new ArrayList<Task>());
-                        }
+                        Log.d(LOG_TAG, recyclerViewPosition + ":sop vr");
+                        ClientTask.getInstance().setRefreshWithoutNotify(true);
+                        adapter.refresh(roomID);
                         return true;
                     }
                 });
@@ -94,10 +90,10 @@ public class TasksActivity extends AppCompatActivity {
                 String task = etInputTask.getText().toString();
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)
                         && !task.equalsIgnoreCase("")) {
-                    if(!task.contains(",")) {
+                    if (!task.contains(",")) {
                         addTask();
                         etInputTask.setText("");
-                    }else {
+                    } else {
                         etInputTask.setText("");
                     }
                     return true;
@@ -111,23 +107,23 @@ public class TasksActivity extends AppCompatActivity {
         return recyclerView;
     }
 
-    public void addTask(){
+    public void addTask() {
         String task = etInputTask.getText().toString();
         ClientTask.getInstance().setRefreshWithoutNotify(true);
-        ClientTask.getInstance().push("2,"+ArrayListRooms.getInstance().get(roomID).getServerDbID()+','+task+','+ClientTask.getInstance().getLogin()+
-                ','+'0'+','+"no comments.");
+        ClientTask.getInstance().push("2," + ArrayListRooms.getInstance().get(roomID).getServerDbID() + ',' + task + ',' + ClientTask.getInstance().getLogin() +
+                ',' + '0' + ',' + "no comments.");
         try {
-            Thread.sleep(200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        adapter.refresh(ArrayListRooms.getInstance().get(roomID).getTasks());
+        adapter.refresh(roomID);
     }
 
-    public void deleteTask(int taskID){
-        ClientTask.getInstance().push("4,"+taskID+".");
+    public void deleteTask(int taskID) {
+        ClientTask.getInstance().push("4," + taskID + ".");
         try {
-            Thread.sleep(200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -138,7 +134,7 @@ public class TasksActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             finishAndRemoveTask();
         } else {
-            adapter.refresh(ArrayListRooms.getInstance().get(roomID).getTasks());
+            adapter.refresh(roomID);
         }
         return super.onOptionsItemSelected(item);
     }
