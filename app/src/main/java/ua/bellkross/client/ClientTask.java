@@ -28,8 +28,9 @@ import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 
 public class ClientTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String IP = "192.168.0.104";
-    public static final int PORT = 5000;
+    //165.227.52.31
+    public static final String IP = "192.168.0.101";
+    public static final int PORT = 80;
 
     private Socket socket;
     private BufferedReader in;
@@ -106,6 +107,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             try {
                 while (!stoped) {
                     final String str = in.readLine();
+                    Log.d(LOG_TAG, "read = " + str);
                     int command = Integer.parseInt(str.substring(0, 1));
                     Log.d(LOG_TAG, "command = " + command);
                     readCommand(str, command);
@@ -140,13 +142,8 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                 push("7");
                 break;
             case 7:
-                String data2 = "";
-                try {
-                    data2 = in.readLine();
-                } catch (IOException e) {
-                    Log.d(LOG_TAG, e.toString());
-                }
-
+                String data2 = data.substring(data.indexOf('&')+1);
+                Log.d(LOG_TAG,"Data2 = " + data2);
                 ArrayList<Room> roomsAL = new ArrayList<>();
                 ArrayList<Task> tasksAL = new ArrayList<>();
 
