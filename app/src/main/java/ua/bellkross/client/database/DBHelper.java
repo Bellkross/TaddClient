@@ -34,7 +34,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static String TASK_TEXT = "TASK_TEXT";
     public static String TASK_NAME_OF_CREATOR = "TASK_NAME_OF_CREATOR";
     public static String TASK_STATE = "TASK_STATE";
-    public static String TASK_COMMENTS = "TASK_COMMENTS";
     public static DBHelper instance;
 
     public DBHelper(Context context) {
@@ -59,12 +58,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 TASK_TEXT + " TEXT NOT NULL," +
                 TASK_NAME_OF_CREATOR + " TEXT NOT NULL," +
                 TASK_STATE + " INTEGER NOT NULL," +
-                TASK_COMMENTS + " TEXT NULL," +
                 FK_ROOM_ID + " INTEGER NOT NULL," +
                 "FOREIGN KEY (" + FK_ROOM_ID + ") REFERENCES " + ROOM_TABLE_NAME + "(" + ROOM_ID + ")" +
                 ");");
 
-        Log.d(LOG_TAG,"database on create");
     }
 
     public int addTask(final Task task) {
@@ -75,7 +72,6 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(TASK_TEXT,task.getText());
         contentValues.put(TASK_NAME_OF_CREATOR,task.getNameOfCreator());
         contentValues.put(TASK_STATE,task.getState());
-        contentValues.put(TASK_COMMENTS,task.getComments());
         contentValues.put(FK_ROOM_ID,task.getRoomID());
         int pos = (int) db.insert(TASK_TABLE_NAME, null, contentValues);
 
@@ -98,18 +94,18 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Room> refresh(ArrayList<Room> rooms){
-        this.clear();
-        int position = -1;
-        int pos;
         SQLiteDatabase db = getWritableDatabase();
+        this.clear(db);
+        int roompos = -1;
+        int taskpos;
         for (Room room:
-             rooms) {
-            room.setArrayListID(++position);
+                rooms) {
+            room.setArrayListID(++roompos);
             room.setDbID(addRoom(room));
-            pos = -1;
+            taskpos = -1;
             for (Task task:
-                 room.getTasks()) {
-                task.setArrayListID(++pos);
+                    room.getTasks()) {
+                task.setArrayListID(++taskpos);
                 task.setDbID(addTask(task));
             }
         }
@@ -117,28 +113,23 @@ public class DBHelper extends SQLiteOpenHelper {
         return rooms;
     }
 
-    public void clear(){
-        SQLiteDatabase db = getWritableDatabase();
+    public void clear(SQLiteDatabase db){
+        db = getWritableDatabase();
         for (Room room : ArrayListRooms.getInstance()){
-            deleteRoom(room.getDbID());
+            deleteRoom(room.getDbID(),db);
             for (Task task:
-                 room.getTasks()) {
-                deleteTask(task.getDbID());
+                    room.getTasks()) {
+                deleteTask(task.getDbID(),db);
             }
         }
-        db.close();
     }
 
-    public void deleteTask(int id){
-        SQLiteDatabase db = getWritableDatabase();
+    public void deleteTask(int id, SQLiteDatabase db){
         db.execSQL("DELETE FROM "+TASK_TABLE_NAME+" WHERE "+TASK_ID+" = "+id+";");
-        db.close();
     }
 
-    public void deleteRoom(int id){
-        SQLiteDatabase db = getWritableDatabase();
+    public void deleteRoom(int id, SQLiteDatabase db){
         db.execSQL("DELETE FROM "+ROOM_TABLE_NAME+" WHERE "+ROOM_ID+" = "+id+";");
-        db.close();
     }
 
     @Override

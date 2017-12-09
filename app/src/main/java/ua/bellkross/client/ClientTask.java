@@ -28,8 +28,7 @@ import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 
 public class ClientTask extends AsyncTask<Void, Void, Void> {
 
-    //
-    public static final String IP = "165.227.52.31";
+    public static final String IP = "192.168.0.101";
     public static final int PORT = 80;
 
     private Socket socket;
@@ -65,8 +64,6 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             resend.execute();
             out = new PrintWriter(socket.getOutputStream(), true);
             push(login);
-            Thread.sleep(100);
-            push("7");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -121,26 +118,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void readCommand(String data, int command) {
-        int c1;
-        int c2;
-        int c3;
-        int dot;
-
         switch (command) {
-            case 1:
-                c1 = data.indexOf(',', 0);
-                c2 = data.indexOf(',', c1 + 1);
-                c3 = data.indexOf(',', c2 + 1);
-                dot = data.indexOf('.', c3 + 1);
-
-                String name = data.substring(c1 + 1, c2);
-                String password = data.substring(c2 + 1, c3);
-                int dbID = Integer.parseInt(data.substring(c3 + 1, dot));
-            case 2:
-            case 3:
-            case 4:
-                push("7");
-                break;
             case 7:
                 String data2 = data.substring(data.indexOf('&')+1);
                 Log.d(LOG_TAG,"Data2 = " + data2);
@@ -153,16 +131,14 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
                     int roomID;
                     String text, nameOfCreator;
                     int state;
-                    String comments;
                     for (int i = 0; i < tasks.length(); ++i) {
                         JSONObject task = (JSONObject) tasks.get(i);
                         serverDbID = task.getInt("id");
                         roomID = task.getInt("fk");
                         text = task.getString("text");
-                        nameOfCreator = task.getString("nameOC");
+                        nameOfCreator = task.getString("creator");
                         state = task.getInt("state");
-                        comments = task.getString("comments");
-                        Task newTask = new Task(serverDbID, roomID, text, nameOfCreator, state, comments);
+                        Task newTask = new Task(serverDbID, roomID, text, nameOfCreator, state);
                         tasksAL.add(newTask);
                     }
 

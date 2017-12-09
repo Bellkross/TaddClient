@@ -7,12 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 
 import ua.bellkross.client.R;
-import ua.bellkross.client.model.Room;
 import ua.bellkross.client.model.Task;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -49,7 +47,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
         holder.getTvText().setText(task.getText());
         if (task.getState() == 1) {
             holder.getTvText().setPaintFlags(holder.getTvText().getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-        }else {
+        } else {
             holder.getTvText().setPaintFlags(holder.getTvText().getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
         holder.getTvNameOfCreator().setText(task.getNameOfCreator());
@@ -63,9 +61,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     public void refresh(int roomID) {
         ArrayList<Task> tasklist = new ArrayList<>();
-        if(!ArrayListRooms.getInstance().isEmpty())
-        tasklist = ArrayListRooms.getInstance().get(roomID).getTasks();
-        else{
+        if (!ArrayListRooms.getInstance().isEmpty())
+            tasklist = ArrayListRooms.getInstance().get(roomID).getTasks();
+        else {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

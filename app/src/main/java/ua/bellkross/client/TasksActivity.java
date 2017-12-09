@@ -55,9 +55,7 @@ public class TasksActivity extends AppCompatActivity {
                         }
                         Log.d(LOG_TAG, "after state = " + task.getState());
                         String taskText = task.getText();
-                        ClientTask.getInstance().push("3," + task.getServerDbID() +
-                                ',' + taskText + ',' + task.getNameOfCreator() +
-                                ',' + task.getState() + ',' + "no comments.");
+                        ClientTask.getInstance().push("3," + task.getServerDbID() + ".");
                         ClientTask.getInstance().setRefreshWithoutNotify(true);
                         adapter.refresh(roomID);
                     }
@@ -68,8 +66,6 @@ public class TasksActivity extends AppCompatActivity {
                         int recyclerViewPosition = recyclerView.getChildAdapterPosition(v);
                         Task task = ArrayListRooms.getInstance().get(roomID).
                                 getTasks().get(recyclerViewPosition);
-                        int size = ArrayListRooms.getInstance().get(roomID).
-                                getTasks().size();
                         deleteTask(task.getServerDbID());
                         Log.d(LOG_TAG, recyclerViewPosition + ":sop vr");
                         ClientTask.getInstance().setRefreshWithoutNotify(true);
@@ -110,8 +106,9 @@ public class TasksActivity extends AppCompatActivity {
     public void addTask() {
         String task = etInputTask.getText().toString();
         ClientTask.getInstance().setRefreshWithoutNotify(true);
-        ClientTask.getInstance().push("2," + ArrayListRooms.getInstance().get(roomID).getServerDbID() + ',' + task + ',' + ClientTask.getInstance().getLogin() +
-                ',' + '0' + ',' + "no comments.");
+        ClientTask.getInstance().push("2," +
+                ArrayListRooms.getInstance().get(roomID).getServerDbID()
+                + ',' + task + ',' + ClientTask.getInstance().getLogin() + '.');
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

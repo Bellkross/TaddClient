@@ -121,7 +121,7 @@ public class RoomsActivity extends AppCompatActivity {
                         ClientTask.getInstance().setLogin(name);
                     }
                 });
-                ClientTask.getInstance().push("8");
+                ClientTask.getInstance().push("0");
                 dialog.show();
                 break;
             case R.id.action_refresh_rooms:

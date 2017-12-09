@@ -12,7 +12,6 @@ public class Task {
     private String text;
     private String nameOfCreator;
     private int state;
-    private String comments;
 
     public Task(int serverDbID, int roomID, String text, String nameOfCreator, int state) {
         this.serverDbID = serverDbID;
@@ -20,15 +19,6 @@ public class Task {
         this.text = text;
         this.nameOfCreator = nameOfCreator;
         this.state = state;
-    }
-
-    public Task(int serverDbID, int roomID, String text, String nameOfCreator, int state, String comments) {
-        this.serverDbID = serverDbID;
-        this.roomID = roomID;
-        this.text = text;
-        this.nameOfCreator = nameOfCreator;
-        this.state = state;
-        this.comments = comments;
     }
 
     @Override
@@ -41,7 +31,6 @@ public class Task {
                 ", text='" + text + '\'' +
                 ", nameOfCreator='" + nameOfCreator + '\'' +
                 ", state=" + state +
-                ", comments='" + comments + '\'' +
                 '}';
     }
 
@@ -101,11 +90,4 @@ public class Task {
         this.state = state;
     }
 
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
 }
