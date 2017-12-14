@@ -39,9 +39,10 @@ public class RoomsActivity extends AppCompatActivity {
     public static String LOG_TAG = "debug";
 
     private Toolbar toolbar;
+    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private static GridView gridView;
 
-
+FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +56,6 @@ public class RoomsActivity extends AppCompatActivity {
 
 
         gridView.setAdapter(GridViewAdapter.getInstance(this));
-
 
         runLayoutAnimation(gridView);
 
@@ -101,7 +101,7 @@ public class RoomsActivity extends AppCompatActivity {
         recyclerView.scheduleLayoutAnimation();
     }
    public void addRoom(View view) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+       AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         ConstraintLayout constraintLayout = (ConstraintLayout)
                 getLayoutInflater().inflate(R.layout.add_room_dialog, null);
         final EditText etName = constraintLayout.findViewById(R.id.tvName);
@@ -124,6 +124,7 @@ public class RoomsActivity extends AppCompatActivity {
         });
         dialog.show();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -68,7 +68,27 @@ public class TasksActivity extends AppCompatActivity {
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
         rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
 
-       //fab.setOnClickListener((View.OnClickListener) fab);
+        if (fab != null)
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int id = v.getId();
+                    switch (id){
+                        case R.id.fab:
+
+                            animateFAB();
+                            break;
+                        case R.id.fab1:
+
+                            Log.d("Raj", "Fab 1");
+                            break;
+                        case R.id.fab2:
+
+                            Log.d("Raj", "Fab 2");
+                            break;
+                    }
+                }
+            });
         //fab1.setOnClickListener((View.OnClickListener) this);
         //fab2.setOnClickListener((View.OnClickListener) this);
 
@@ -157,24 +177,6 @@ public class TasksActivity extends AppCompatActivity {
 
 
 
-    public void onClick(View v) {
-        int id = v.getId();
-        switch (id){
-            case R.id.fab:
-
-                animateFAB();
-                break;
-            case R.id.fab1:
-
-                Log.d("Raj", "Fab 1");
-                break;
-            case R.id.fab2:
-
-                Log.d("Raj", "Fab 2");
-                break;
-        }
-    }
-
     public void animateFAB(){
 
         if(isFabOpen){
@@ -247,7 +249,6 @@ public class TasksActivity extends AppCompatActivity {
         final Context context = recyclerView.getContext();
         final LayoutAnimationController controller =
                 AnimationUtils.loadLayoutAnimation(context, R.anim.layout_fall_down);
-
         recyclerView.setLayoutAnimation(controller);
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
