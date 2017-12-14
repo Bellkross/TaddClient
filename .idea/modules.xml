@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://C:\Users\alibo\Desktop\TaddClient-master\Client.iml" filepath="C:\Users\alibo\Desktop\TaddClient-master\Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TaddClient.iml" filepath="$PROJECT_DIR$/TaddClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+    </modules>
+  </component>
+</project>
