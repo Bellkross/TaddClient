@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -19,30 +17,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.GridLayoutAnimationController;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import ua.bellkross.client.adapters.ArrayListRooms;
 import ua.bellkross.client.adapters.GridViewAdapter;
-import ua.bellkross.client.adapters.RecyclerViewAdapter;
 import ua.bellkross.client.database.DBHelper;
-import ua.bellkross.client.model.Room;
-import ua.bellkross.client.model.Task;
 
 public class RoomsActivity extends AppCompatActivity {
 
     public static String LOG_TAG = "debug";
 
     private Toolbar toolbar;
-    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
     private static GridView gridView;
 
-FloatingActionButton fab;
+    FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,8 +94,9 @@ FloatingActionButton fab;
         recyclerView.setLayoutAnimation(controller);
         recyclerView.scheduleLayoutAnimation();
     }
-   public void addRoom(View view) {
-       AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+    public void addRoom(View view) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         ConstraintLayout constraintLayout = (ConstraintLayout)
                 getLayoutInflater().inflate(R.layout.add_room_dialog, null);
         final EditText etName = constraintLayout.findViewById(R.id.tvName);

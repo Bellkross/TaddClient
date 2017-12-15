@@ -28,7 +28,7 @@ import static ua.bellkross.client.RoomsActivity.LOG_TAG;
 
 public class ClientTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String IP = "169.254.41.183";
+    public static final String IP = "192.168.0.105";
     public static final int PORT = 80;
 
     private Socket socket;

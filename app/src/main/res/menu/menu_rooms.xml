@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:icon="@drawable/set"
-    >
+    android:icon="@drawable/set">
+    <item
+        android:id="@+id/action_refresh_rooms"
+        android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="100"
+        android:title="@string/action_refresh"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_change_name"
         android:orderInCategory="100"
         android:title="@string/action_changeName"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_refresh_rooms"
-        android:orderInCategory="100"
-        android:icon="@drawable/updt"
-        android:title="@string/action_refresh"
-        app:showAsAction="always" />
 </menu>
